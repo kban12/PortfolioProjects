@@ -1,3 +1,6 @@
+
+
+
 SELECT *
 FROM NashvilleHousing
 
@@ -139,11 +142,15 @@ SELECT *,
 				UniqueID
 				) AS row_num
 FROM NashvilleHousing
+
+	
 --ORDER BY ParcelID
-)
+
+
 DELETE
 FROM RowNumCTE    
 WHERE row_num > 1
+
 --ORDER BY PropertyAddress
 
 
