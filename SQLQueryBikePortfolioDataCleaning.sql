@@ -2,6 +2,8 @@
 
 /* 
 This data was imported from csv files provided as part of the Google Data Analysis Certificate program on Coursera.
+It covers bike share data from 2020 split into columns containing ride ID, start and end times, start and end stations names, IDs, latitude and longitude, 
+bike type, as well as if the customer was a subscriber or not. 
 The csv files were initially organized into both monthly records and quarterly records.
 I imported them using the SQL Import Wizard, ensuring that each column's data type was correct for my purposes. 
 For example, I changed the 'ride_id', 'start_station_id', and 'end_station_id' columns to a character data type from a numeric, 
@@ -9,7 +11,7 @@ because I would not be performing calculations with the columns's data.
 
 In this project, I chose to merge and create new tables as well as modify the data in my existing tables. This was due to necessity in part,
 as well as to demonstrate proficiency for this portfolio project. I understand however, that I may not have the authority or permissions 
-to do so when working as a data analyst,as well as the importance of working within data management guidelines. I have included alternative
+to do so when working as a data analyst, as well as the importance of working within data management guidelines. I have included alternative
 methods, where appropriate, that I would use instead of modifying tables or data. 
 */
 
@@ -106,7 +108,15 @@ SELECT ride_id, started_at, ended_at, DATEDIFF(second, started_at, ended_at) AS 
 FROM Divvy_Trips_2020_Q1
 ORDER BY duration
 
--- Success! Moving on to checking for null values
+
+
+/* If I were not able to update the incorrect data in this table personally, I could instead wrap the DATEDIFF function in an absolute value function 
+when creating temporary tables to analyze the trip durations. This would return the correct duration regardless of reversed start and end 
+trip times in some records. 
+*/
+
+
+--  Moving on to checking for null values
 
 SELECT * 
 FROM  Divvy_Trips_2020_Q1
