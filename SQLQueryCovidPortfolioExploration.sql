@@ -1,3 +1,9 @@
+/* For this project, I explored data on Covid deaths and vaccinations collected by The CDC.  
+*/
+
+
+
+
 SELECT location,date,total_cases,new_cases,total_deaths,population
 FROM CovidDeaths$
 ORDER BY 1,2
