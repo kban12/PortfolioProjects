@@ -6,6 +6,11 @@ The csv files were initially organized into both monthly records and quarterly r
 I imported them using the SQL Import Wizard, ensuring that each column's data type was correct for my purposes. 
 For example, I changed the 'ride_id', 'start_station_id', and 'end_station_id' columns to a character data type from a numeric, 
 because I would not be performing calculations with the columns's data.
+
+In this project, I chose to merge and create new tables as well as modify the data in my existing tables. This was due to necessity in part,
+as well as to demonstrate proficiency for this portfolio project. I understand however, that I may not have the authority or permissions 
+to do so when working as a data analyst,as well as the importance of working within data management guidelines. I have included alternative
+methods, where appropriate, that I would use instead of modifying tables or data. 
 */
 
 
@@ -44,46 +49,46 @@ SELECT ride_id, started_at, ended_at, DATEDIFF(minute, started_at, ended_at) AS 
 FROM Divvy_Trips_2020_Q1
 ORDER BY duration_min
 
--- Found 25 rows where the start and end time are reversed
+-- Found almost 100 rows where the start and end time are reversed
 
 /*
 In order to fix these rows, I created two temporary tables. I used to first to collect the incorrect data and fix it. 
-I then applied these changes to the second table, which contained all of the affected rows as well as several rows which were already correct.
+I then applied these changes to the second table, which contained all of the affected rows as well as rows which were already correct.
 I did this to ensure that my fix only affected incorrect data in the selected columns.
 */
 
 DROP TABLE IF EXISTS #TempSwap
-SELECT TOP 25 ride_id, started_at, ended_at, DATEDIFF(minute, started_at, ended_at) AS duration_min
+SELECT TOP 100 ride_id, started_at, ended_at, DATEDIFF(second, started_at, ended_at) AS duration
 INTO #TempSwap
 FROM Divvy_Trips_2020_Q1
-ORDER BY duration_min ASC
+ORDER BY duration ASC
 
 SELECT *
 FROM #TempSwap
-ORDER BY duration_min
+ORDER BY duration
 
 
 UPDATE #TempSwap
 SET started_at = ended_at, ended_at = started_at
-WHERE duration_min < 0
+WHERE duration < 0
 
 
 DROP TABLE IF EXISTS #TempSwap2
-SELECT TOP 30 ride_id, started_at, ended_at, DATEDIFF(minute, started_at, ended_at) AS duration_min
+SELECT TOP 130 ride_id, started_at, ended_at, DATEDIFF(second, started_at, ended_at) AS duration
 INTO #TempSwap2
 FROM Divvy_Trips_2020_Q1
-ORDER BY duration_min ASC
+ORDER BY duration ASC
 
 SELECT *
 FROM #TempSwap2
-ORDER BY duration_min
+ORDER BY duration
 
 UPDATE a
 SET a.started_at=b.started_at, a.ended_at=b.ended_at
 FROM #TempSwap2 AS a
 INNER JOIN #TempSwap AS b ON a.ride_id = b.ride_id
 
--- As my soulution seems to work as intended, only changing the start and end times of the 25 reversed rows, I will then apply it to the entire table
+-- As my soulution seems to work as intended, only changing the start and end times of the reversed rows, I will then apply it to the entire table
 
 
 UPDATE a
@@ -93,13 +98,13 @@ INNER JOIN #TempSwap AS b ON a.ride_id = b.ride_id
 
 -- Checking a specific ride_id's start and end times, then the entire table
 
-SELECT ride_id, started_at, ended_at, DATEDIFF(minute, started_at, ended_at) AS duration_min
+SELECT ride_id, started_at, ended_at, DATEDIFF(second, started_at, ended_at) AS duration
 FROM Divvy_Trips_2020_Q1
 WHERE ride_id = '6FABADDD595AF922'
 
-SELECT ride_id, started_at, ended_at, DATEDIFF(minute, started_at, ended_at) AS duration_min
+SELECT ride_id, started_at, ended_at, DATEDIFF(second, started_at, ended_at) AS duration
 FROM Divvy_Trips_2020_Q1
-ORDER BY duration_min
+ORDER BY duration
 
 -- Success! Moving on to checking for null values
 
@@ -111,7 +116,11 @@ WHERE (ride_id IS NULL OR rideable_type IS NULL OR started_at IS NULL
 	OR start_lng IS NULL OR end_lat IS NULL OR end_lng IS NULL 
 	OR member_casual IS NULL) 
 
--- There is only one record with a null value returned here, and I dont have the information to correct it, so I will move on.
+/* There is only one record with null values returned here, in the end station ID, name and latitude and longitude columns.
+If one of these columns contained data, that could potentially be used to determine approximate values for the others, and updated, 
+if appropriate. As they are all missing, my options are to find if this information has been stored elsewhere, document the missing 
+values and move through the rest of my data exploration.
+ */
 
 -- Determining the amount of times a bike starts in a specific station
 
